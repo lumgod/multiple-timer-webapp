@@ -22,10 +22,10 @@ export default function AuthPage() {
   // Show loading state while checking authentication
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-muted/30">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>Loading...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
         </div>
       </div>
     )
@@ -37,14 +37,16 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-muted/30 p-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="w-full max-w-md">
-        <h1 className="mb-8 text-center text-3xl font-bold">Client Time Tracker</h1>
+        <h1 className="mb-8 text-center text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          Client Time Tracker
+        </h1>
 
         {isLogin ? <LoginForm /> : <RegisterForm />}
 
         <div className="mt-4 text-center">
-          <Button variant="link" onClick={() => setIsLogin(!isLogin)}>
+          <Button variant="link" onClick={() => setIsLogin(!isLogin)} className="text-blue-600 hover:text-blue-800">
             {isLogin ? "Need an account? Register" : "Already have an account? Login"}
           </Button>
         </div>
