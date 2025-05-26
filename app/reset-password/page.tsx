@@ -23,7 +23,7 @@ export default function ResetPasswordPage() {
 
    
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password/confirm`,
+  redirectTo: "https://clienttimetracker.com/reset-password/confirm",
     })
 
     if (error) {
