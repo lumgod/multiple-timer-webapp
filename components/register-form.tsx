@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "@/components/ui/use-toast"
+import Link from "next/link"
 
 export function RegisterForm() {
   const [name, setName] = useState("")
@@ -66,19 +67,32 @@ export function RegisterForm() {
   }
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
-        <CardTitle>Create an Account</CardTitle>
-        <CardDescription>Register to start tracking your time</CardDescription>
+    <Card className="w-full max-w-md mx-auto shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-2xl bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          Create an Account
+        </CardTitle>
+        <CardDescription className="text-gray-600">Register to start tracking your time</CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
-            <Input id="name" placeholder="Your Name" value={name} onChange={(e) => setName(e.target.value)} required />
+            <Label htmlFor="name" className="text-gray-700 font-medium">
+              Name
+            </Label>
+            <Input
+              id="name"
+              placeholder="Your Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+            />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className="text-gray-700 font-medium">
+              Email
+            </Label>
             <Input
               id="email"
               type="email"
@@ -86,10 +100,13 @@ export function RegisterForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password" className="text-gray-700 font-medium">
+              Password
+            </Label>
             <Input
               id="password"
               type="password"
@@ -97,10 +114,13 @@ export function RegisterForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <Label htmlFor="confirmPassword" className="text-gray-700 font-medium">
+              Confirm Password
+            </Label>
             <Input
               id="confirmPassword"
               type="password"
@@ -108,15 +128,25 @@ export function RegisterForm() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
+              className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
             />
           </div>
         </CardContent>
         <CardFooter>
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <Button
+            type="submit"
+            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium"
+            disabled={isLoading}
+          >
             {isLoading ? "Creating account..." : "Register"}
           </Button>
         </CardFooter>
       </form>
+      <div className="px-6 pb-6 text-center">
+        <Link href="/about" className="text-gray-500 hover:text-blue-600 text-sm hover:underline">
+          About this app
+        </Link>
+      </div>
     </Card>
   )
 }
