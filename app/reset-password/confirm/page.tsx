@@ -1,8 +1,7 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -18,7 +17,42 @@ export default function ResetPasswordConfirmPage() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [isValidSession, setIsValidSession] = useState(false)
+  const [checkingSession, setCheckingSession] = useState(true)
   const router = useRouter()
+
+  // Check if we have a valid password reset session
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession()
+        if (session && !error) {
+          setIsValidSession(true)
+        } else {
+          // Try to get session from URL hash (for password reset)
+          const hashParams = new URLSearchParams(window.location.hash.substring(1))
+          const accessToken = hashParams.get('access_token')
+          const refreshToken = hashParams.get('refresh_token')
+          
+          if (accessToken && refreshToken) {
+            const { error: sessionError } = await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken
+            })
+            if (!sessionError) {
+              setIsValidSession(true)
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Session check error:', error)
+      } finally {
+        setCheckingSession(false)
+      }
+    }
+
+    checkSession()
+  }, [])
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -42,7 +76,7 @@ export default function ResetPasswordConfirmPage() {
     }
 
     setLoading(true)
-    
+
     const { error } = await supabase.auth.updateUser({
       password: password,
     })
@@ -68,6 +102,45 @@ export default function ResetPasswordConfirmPage() {
     setTimeout(() => {
       router.push("/auth")
     }, 3000)
+  }
+
+  // Show loading while checking session
+  if (checkingSession) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+          <CardContent className="flex items-center justify-center p-8">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Verifying reset link...</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  // Show error if invalid session
+  if (!isValidSession) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-red-600">Invalid Reset Link</CardTitle>
+            <CardDescription className="text-gray-600">
+              This password reset link is invalid or has expired.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link href="/reset-password">
+              <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
+                Request New Reset Link
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   if (success) {
